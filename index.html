@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HALDE — The 24-Hour Bottle</title>
+<!-- DIRECTION
+  Palette: ground #0B1412 (deep glacial), surface #10201C, ink #EAF3EF, accent #7BE0C0 (meltwater), warm #F0C75E (sun), spare #2B4A42
+  Type: Big Shoulders Display (poster numerals) + Instrument Sans; JetBrains Mono for specs
+  Layout: poster statement hero with cropped giant type + full-bleed bottle photo bleeding off right; then a ruled spec ledger, a finish swatch grid, a temperature / ice calculator, and a numbered FAQ.
+  Memorable thing: a live ICE RETENTION calculator with a melting-ice gauge that responds to bottle size and ambient temperature.
+-->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@500;700;800&family=Instrument+Sans:ital,wght@0,400;0,500;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ground:#0B1412;
+    --surface:#10201C;
+    --surface-2:#16302A;
+    --ink:#EAF3EF;
+    --ink-dim:#9FB8B1;
+    --accent:#7BE0C0;
+    --warm:#F0C75E;
+    --line:rgba(234,243,239,.14);
+    --pad:clamp(1.25rem, 6vw, 5rem);
+    --r:14px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--ground);
+    color:var(--ink);
+    font-family:'Instrument Sans',system-ui,sans-serif;
+    font-size:clamp(1rem,.95rem + .2vw,1.075rem);
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  ::selection{background:var(--accent);color:#06231C}
+  a{color:inherit;text-decoration:none}
+  img{display:block;max-width:100%}
+  .mono{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase}
+  .wrap{max-width:1240px;margin:0 auto;padding-inline:var(--pad)}
+  .grain{position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.035;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+  /* ---------- NAV ---------- */
+  header{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:rgba(11,20,18,.72);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:1.5rem;height:68px}
+  .brand{display:flex;align-items:baseline;gap:.6rem;font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:1.6rem;letter-spacing:.02em;line-height:1}
+  .brand span{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:.62rem;letter-spacing:.2em;font-weight:400;transform:translateY(-2px)}
+  .nav-links{display:flex;gap:1.75rem}
+  .nav-links a{font-size:.86rem;color:var(--ink-dim);transition:color .2s}
+  .nav-links a:hover{color:var(--accent)}
+  .btn{display:inline-flex;align-items:center;gap:.55rem;border:1px solid var(--line);border-radius:999px;padding:.7rem 1.35rem;font-size:.86rem;font-weight:600;background:transparent;color:var(--ink);cursor:pointer;transition:transform .2s,background .2s,border-color .2s,color .2s}
+  .btn:hover{transform:translateY(-2px);border-color:var(--accent);color:var(--accent)}
+  .btn:active{transform:scale(.97)}
+  .btn-solid{background:var(--accent);color:#06231C;border-color:var(--accent)}
+  .btn-solid:hover{background:#9af0d6;color:#06231C;border-color:#9af0d6}
+  .nav .btn{padding:.6rem 1.1rem}
+  @media(max-width:860px){
+    .nav{height:auto;padding-block:.9rem;flex-wrap:wrap;justify-content:center;gap:.5rem 1rem}
+    .nav-links{order:3;flex-basis:100%;justify-content:center;flex-wrap:wrap;gap:.75rem 1.1rem}
+    .nav-links a{font-size:.8rem}
+    .nav .btn{padding:.5rem .9rem;font-size:.78rem}
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{position:relative;padding-top:clamp(2.5rem,7vw,5rem);padding-bottom:clamp(3rem,8vw,6rem);overflow:hidden}
+  .hero::before{content:"";position:absolute;inset:-20% -10% auto	auto;width:min(720px,80vw);aspect-ratio:1;
+    background:radial-gradient(circle,rgba(123,224,192,.16),transparent 62%);filter:blur(20px);pointer-events:none}
+  .hero-grid{display:grid;grid-template-columns:1.08fr .92fr;gap:clamp(1.5rem,4vw,3.5rem);align-items:center}
+  .eyebrow{display:inline-flex;align-items:center;gap:.6rem;color:var(--accent);margin-bottom:1.5rem}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--accent)}
+  h1{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:clamp(3.4rem,9.5vw,7.6rem);line-height:.86;letter-spacing:-.015em;text-wrap:balance}
+  h1 em{font-style:normal;color:var(--accent);display:inline-block}
+  .hero p.lede{margin-top:1.75rem;max-width:46ch;color:var(--ink-dim);font-size:clamp(1rem,1.4vw,1.12rem)}
+  .hero-cta{display:flex;flex-wrap:wrap;gap:.85rem;margin-top:2rem}
+  .price-row{display:flex;align-items:baseline;gap:.9rem;margin-top:2.25rem;padding-top:1.5rem;border-top:1px solid var(--line)}
+  .price{font-family:'Big Shoulders Display',sans-serif;font-size:2.9rem;font-weight:800;line-height:1;letter-spacing:-.01em}
+  .price small{font-family:'Instrument Sans',sans-serif;font-size:.8rem;font-weight:400;color:var(--ink-dim);letter-spacing:0}
+  .stock{display:flex;align-items:center;gap:.5rem;color:var(--accent)}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 0 rgba(123,224,192,.6);animation:pulse 2.4s infinite}
+  @keyframes pulse{70%{box-shadow:0 0 0 9px rgba(123,224,192,0)}100%{box-shadow:0 0 0 0 rgba(123,224,192,0)}}
+
+  .hero-visual{position:relative;aspect-ratio:4/5;border-radius:280px 280px var(--r) var(--r);overflow:hidden;border:1px solid var(--line);background:var(--surface)}
+  .hero-visual img{width:100%;height:100%;object-fit:cover;filter:saturate(.82) contrast(1.04)}
+  .hero-visual::after{content:"";position:absolute;inset:0;background:linear-gradient(200deg,rgba(11,20,18,0) 30%,rgba(11,20,18,.78))}
+  .hero-tag{position:absolute;left:1.1rem;bottom:1.1rem;z-index:2;display:flex;gap:.5rem;flex-wrap:wrap}
+  .chip{border:1px solid rgba(234,243,239,.25);background:rgba(10,26,22,.6);backdrop-filter:blur(8px);border-radius:999px;padding:.4rem .8rem;font-family:'JetBrains Mono',monospace;font-size:.68rem;letter-spacing:.1em;text-transform:uppercase}
+  @media(max-width:860px){
+    .hero-grid{grid-template-columns:1fr}
+    .hero-visual{aspect-ratio:1/1;border-radius:220px 220px var(--r) var(--r);order:-1;max-width:420px;margin-inline:auto;width:100%}
+  }
+
+  /* ---------- MARQUEE ---------- */
+  .band{border-block:1px solid var(--line);background:var(--surface);overflow:hidden;padding-block:.85rem}
+  .marquee{display:flex;gap:2.5rem;width:max-content;animation:slide 34s linear infinite}
+  .marquee span{display:flex;align-items:center;gap:2.5rem;font-family:'Big Shoulders Display',sans-serif;font-weight:700;font-size:1.05rem;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-dim);white-space:nowrap}
+  .marquee span i{font-style:normal;color:var(--accent)}
+  @keyframes slide{to{transform:translateX(-50%)}}
+  @media(prefers-reduced-motion:reduce){.marquee{animation:none}}
+
+  /* ---------- SECTION SHELL ---------- */
+  section{padding-block:clamp(3.5rem,8vw,6.5rem)}
+  .sec-head{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;margin-bottom:clamp(1.75rem,4vw,3rem)}
+  h2{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:clamp(2.1rem,5vw,3.6rem);line-height:.95;letter-spacing:-.01em;text-wrap:balance}
+  .sec-head p{color:var(--ink-dim);max-width:38ch;font-size:.95rem}
+
+  /* ---------- SPEC LEDGER ---------- */
+  .ledger{border-top:1px solid var(--line)}
+  .row{display:grid;grid-template-columns:minmax(140px,.34fr) 1fr;gap:1rem 2rem;padding:1.15rem 0;border-bottom:1px solid var(--line);transition:background .25s, padding .25s}
+  .row:hover{background:linear-gradient(90deg,rgba(123,224,192,.06),transparent 70%);padding-inline:.75rem}
+  .row dt{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);padding-top:.2rem}
+  .row dd{font-size:1.02rem;max-width:62ch}
+  .row dd b{font-weight:600}
+  @media(max-width:640px){.row{grid-template-columns:1fr;gap:.35rem}}
+
+  /* ---------- FINISHES ---------- */
+  .finishes{display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.5rem,4vw,3rem);align-items:center}
+  .swatch-stage{position:relative;aspect-ratio:1;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);background:var(--surface-2)}
+  .swatch-stage img{width:100%;height:100%;object-fit:cover;transition:opacity .35s}
+  .swatch-stage .tint{position:absolute;inset:0;mix-blend-mode:soft-light;transition:background .4s}
+  .swatch-name{position:absolute;left:1rem;bottom:1rem;z-index:2;font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:1.9rem;line-height:1;text-shadow:0 2px 20px rgba(0,0,0,.6)}
+  .swatches{display:flex;flex-wrap:wrap;gap:.7rem;margin:1.6rem 0 1.4rem}
+  .sw{width:54px;height:54px;border-radius:50%;border:1px solid rgba(234,243,239,.22);cursor:pointer;position:relative;transition:transform .2s,box-shadow .2s}
+  .sw:hover{transform:translateY(-3px)}
+  .sw[aria-pressed="true"]{box-shadow:0 0 0 2px var(--ground),0 0 0 4px var(--accent)}
+  .sw:active{transform:scale(.94)}
+  .finish-desc{color:var(--ink-dim);max-width:44ch;min-height:5.2em}
+  @media(max-width:860px){.finishes{grid-template-columns:1fr}.swatch-stage{aspect-ratio:4/3}}
+
+  /* ---------- CALCULATOR ---------- */
+  .calc{background:var(--surface);border:1px solid var(--line);border-radius:clamp(var(--r),2vw,24px);padding:clamp(1.25rem,4vw,2.75rem);display:grid;grid-template-columns:1fr 1fr;gap:clamp(1.5rem,4vw,3rem)}
+  .ctrl{margin-bottom:1.9rem}
+  .ctrl label{display:flex;justify-content:space-between;align-items:baseline;gap:1rem;margin-bottom:.75rem}
+  .ctrl label b{font-family:'JetBrains Mono',monospace;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-dim);font-weight:400}
+  .ctrl label output{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:1.7rem;line-height:1;color:var(--accent)}
+  input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:4px;border-radius:99px;background:linear-gradient(90deg,var(--accent) var(--p,30%),rgba(234,243,239,.16) var(--p,30%));outline:none;cursor:pointer}
+  input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:20px;height:20px;border-radius:50%;background:var(--ink);border:3px solid var(--ground);box-shadow:0 0 0 1px var(--accent);cursor:grab;transition:transform .15s}
+  input[type=range]::-webkit-slider-thumb:active{transform:scale(1.15);cursor:grabbing}
+  input[type=range]::-moz-range-thumb{width:16px;height:16px;border-radius:50%;background:var(--ink);border:3px solid var(--ground);box-shadow:0 0 0 1px var(--accent);cursor:grab}
+  .readout{background:var(--ground);border:1px solid var(--line);border-radius:var(--r);padding:1.5rem;display:flex;flex-direction:column;justify-content:center;gap:1.25rem}
+  .big-num{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:clamp(3.2rem,7vw,4.6rem);line-height:.85;letter-spacing:-.02em}
+  .big-num span{font-family:'Instrument Sans',sans-serif;font-size:1rem;font-weight:500;color:var(--ink-dim);letter-spacing:0;margin-left:.4rem}
+  .gauge{height:10px;border-radius:99px;background:rgba(234,243,239,.1);overflow:hidden}
+  .gauge i{display:block;height:100%;width:50%;border-radius:99px;background:linear-gradient(90deg,var(--warm),var(--accent));transition:width .45s cubic-bezier(.22,1,.36,1)}
+  .calc-note{font-size:.85rem;color:var(--ink-dim);border-top:1px solid var(--line);padding-top:1rem}
+  @media(max-width:860px){.calc{grid-template-columns:1fr}}
+
+  /* ---------- SPLIT MEDIA ---------- */
+  .split{display:grid;grid-template-columns:.95fr 1.05fr;gap:clamp(1.5rem,4vw,3.5rem);align-items:center}
+  .split img{width:100%;aspect-ratio:5/4;object-fit:cover;border-radius:var(--r);border:1px solid var(--line)}
+  .split ul{list-style:none;display:grid;gap:1.1rem;margin-top:1.6rem}
+  .split li{display:grid;grid-template-columns:auto 1fr;gap:.9rem;align-items:start}
+  .split li svg{color:var(--accent);margin-top:.2rem;flex:none}
+  .split li b{display:block;font-weight:600}
+  .split li p{color:var(--ink-dim);font-size:.93rem}
+  @media(max-width:860px){.split{grid-template-columns:1fr}.split img{order:-1}}
+
+  /* ---------- STAT BAND ---------- */
+  .stat-band{background:var(--accent);color:#06231C;padding-block:clamp(2.25rem,5vw,3.25rem)}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1.5rem}
+  .stats div{display:flex;flex-direction:column;gap:.15rem}
+  .stats b{font-family:'Big Shoulders Display',sans-serif;font-weight:800;font-size:clamp(2rem,4.5vw,3rem);line-height:1;font-variant-numeric:tabular-nums}
+  .stats span{font-family:'JetBrains Mono',monospace;font-size:.66rem;letter-spacing:.13em;text-transform:uppercase;opacity:.8}
+  @media(max-width:760px){.stats{grid-template-columns:1fr 1fr;gap:1.75rem 1rem}}
+
+  /* ---------- FAQ ---------- */
+  details{border-bottom:1px solid var(--line);padding:1.1rem 0}
+  details summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:1.5rem;align-items:center;font-weight:500;font-size:1.05rem}
+  details summary::-webkit-details-marker{display:none}
+  details summary::after{content:"+";font-family:'JetBrains Mono',monospace;color:var(--accent);font-size:1.1rem;transition:transform .25s}
+  details[open] summary::after{transform:rotate(45deg)}
+  details p{color:var(--ink-dim);margin-top:.8rem;max-width:66ch;font-size:.96rem}
+
+  /* ---------- CTA ---------- */
+  .buy{position:relative;overflow:hidden;border-top:1px solid var(--line);background:var(--surface);text-align:center}
+  .buy .wrap{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:1.5rem}
+  .buy h2{font-size:clamp(2.4rem,6vw,4.4rem)}
+  .buy p{color:var(--ink-dim);max-width:40ch}
+  .buy img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.16;z-index:0;filter:saturate(.5)}
+
+  footer{border-top:1px solid var(--line);padding-block:2rem;color:var(--ink-dim);font-size:.82rem}
+  .foot{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:center}
+
+  .reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1)}
+  .reveal.in{opacity:1;transform:none}
+  @media(prefers-reduced-motion:reduce){.reveal{opacity:1;transform:none;transition:none}*{animation:none!important}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<header>
+  <div class="wrap nav">
+    <a class="brand" href="#top">HALDE<span>EST. 2019</span></a>
+    <nav class="nav-links">
+      <a href="#specs">Specs</a>
+      <a href="#finish">Finishes</a>
+      <a href="#ice">Ice test</a>
+      <a href="#why">Why it holds</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <button class="btn btn-solid" onclick="document.getElementById('buy').scrollIntoView()">Get the 750ml</button>
+  </div>
+</header>
+
+<main id="top">
+  <!-- HERO -->
+  <section class="hero">
+    <div class="wrap hero-grid">
+      <div>
+        <div class="eyebrow mono">Vacuum insulated · 750 ml</div>
+        <h1>Cold for<br>24 hours.<br><em>Silent.</em></h1>
+        <p class="lede">A double-walled stainless bottle with no plastic in the water path, one-turn threading, and a lid that doesn't click. Built for people who notice the small things.</p>
+        <div class="hero-cta">
+          <button class="btn btn-solid" onclick="document.getElementById('buy').scrollIntoView()">Choose your finish</button>
+          <a class="btn" href="#specs">Read the specs</a>
+        </div>
+        <div class="price-row">
+          <div class="price">$48 <small>USD</small></div>
+          <div class="stock mono"><span class="dot"></span> In stock — ships tomorrow</div>
+        </div>
+      </div>
+      <div class="hero-visual reveal">
+        <img src="https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=1200&q=80" width="1200" height="1500" alt="Matte steel water bottle standing on stone" fetchpriority="high">
+        <div class="hero-tag">
+          <span class="chip">18/8 stainless</span>
+          <span class="chip">BPA-free line</span>
+          <span class="chip">Leak-proof cap</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- MARQUEE -->
+  <div class="band">
+    <div class="marquee" aria-hidden="true">
+      <span>Wash every part in the dishwasher <i>·</i> No plastic touches your water <i>·</i> 24 h cold / 12 h hot <i>·</i> Fits a bike cage <i>·</i> Lifetime replacement of the seal <i>·</i></span>
+      <span>Wash every part in the dishwasher <i>·</i> No plastic touches your water <i>·</i> 24 h cold / 12 h hot <i>·</i> Fits a bike cage <i>·</i> Lifetime replacement of the seal <i>·</i></span>
+    </div>
+  </div>
+
+  <!-- SPECS -->
+  <section id="specs">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <h2>The numbers,<br>without the adjectives.</h2>
+        <p>Measured in a 21 °C room with the bottle filled to the shoulder. Published because you'll check.</p>
+      </div>
+      <dl class="ledger">
+        <div class="row reveal"><dt>Capacity</dt><dd><b>750 ml</b> to the shoulder, 790 ml to the rim</dd></div>
+        <div class="row reveal"><dt>Weight</dt><dd><b>342 g</b> empty, 1,092 g full</dd></div>
+        <div class="row reveal"><dt>Dimensions</dt><dd><b>26.4 cm</b> tall · <b>7.2 cm</b> base — clears a standard bike cage and a car cup holder</dd></div>
+        <div class="row reveal"><dt>Material</dt><dd><b>18/8 stainless steel</b> inside and out, copper-lined vacuum gap, food-grade silicone seal</dd></div>
+        <div class="row reveal"><dt>Thermal</dt><dd>Cold <b>24 h</b> · Hot <b>12 h</b> · Ice cubes still present after <b>31 h</b> in the standard test</dd></div>
+        <div class="row reveal"><dt>Opening</dt><dd><b>52 mm</b> — fits a full-size ice cube and a bottle brush</dd></div>
+        <div class="row reveal"><dt>Cleaning</dt><dd>Every component is <b>dishwasher safe</b>, top rack, no disassembly tools</dd></div>
+        <div class="row reveal"><dt>Warranty</dt><dd>Body <b>lifetime</b>. Seals replaced free, once a year, for as long as you own it</dd></div>
+      </dl>
+    </div>
+  </section>
+
+  <!-- FINISHES -->
+  <section id="finish">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <h2>Five finishes.<br>Same bottle.</h2>
+        <p>Powder-coat outside, raw steel inside. Pick the one that survives your bag.</p>
+      </div>
+      <div class="finishes reveal">
+        <div class="swatch-stage">
+          <img id="finishImg" src="https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=1000&q=80" width="1000" height="1000" alt="Water bottle in a matte finish" loading="lazy">
+          <div class="tint" id="finishTint"></div>
+          <div class="swatch-name" id="finishName">Glacier</div>
+        </div>
+        <div>
+          <div class="mono" style="color:var(--accent)">Finish 01 / 05</div>
+          <p class="finish-desc" id="finishDesc">Soft off-white with a fine matte tooth. Hides fingerprints, shows scratches — a bottle that looks used on purpose.</p>
+          <div class="swatches" id="swatches" role="group" aria-label="Choose a finish"></div>
+          <button class="btn btn-solid" onclick="document.getElementById('buy').scrollIntoView()">Add <span id="addName" style="font-weight:700">Glacier</span> — $48</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CALCULATOR -->
+  <section id="ice">
+    <div class="wrap">
+      <div class="sec-head reveal">
+        <h2>How long will<br>your ice last?</h2>
+        <p>Real chamber data, interpolated. Move the sliders.</p>
+      </div>
+      <div class="calc reveal">
+        <div>
+          <div class="ctrl">
+            <label for="size"><b>Bottle size</b><output id="sizeOut">750 ml</output></label>
+            <input type="range" id="size" min="500" max="1000" step="50" value="750" aria-describedby="sizeOut">
+          </div>
+          <div class="ctrl">
+            <label for="temp"><b>Room temperature</b><output id="tempOut">21 °C</output></label>
+            <input type="range" id="temp" min="0" max="40" step="1" value="21" aria-describedby="tempOut">
+          </div>
+          <div class="ctrl" style="margin-bottom:0">
+            <label for="fill"><b>How full</b><output id="fillOut">80%</output></label>
+            <input type="range" id="fill" min="40" max="100" step="5" value="80" aria-describedby="fillOut">
+          </div>
+        </div>
+        <div class="readout">
+          <div class="mono" style="color:var(--ink-dim)">Ice stays solid for roughly</div>
+          <div class="big-num"><span id="hours">26.5</span><span>hours</span></div>
+          <div class="gauge" role="img" aria-labelledby="hours"><i id="bar"></i></div>
+          <div class="calc-note" id="advice">At this setting, you'll still hear ice rattle the next morning. Refill to the shoulder and keep the lid closed.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPLIT -->
+  <section id="why">
+    <div class="wrap split">
+      <img class="reveal" src="https://images.unsplash.com/photo-1523362628745-0c100150b504?auto=format&fit=crop&w=1200&q=80" width="1200" height="960" alt="Bottle held outdoors against daylight" loading="lazy">
+      <div class="reveal">
+        <h2>Why it holds<br>when others don't.</h2>
+        <ul>
+          <li>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6 9 17l-5-5"/></svg>
+            <div><b>Copper-lined vacuum gap</b><p>Most bottles silver-coat the gap. Copper reflects heat roughly twice as well, which is the whole 24 hours right there.</p></div>
+          </li>
+          <li>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6 9 17l-5-5"/></svg>
+            <div><b>Steel where it touches water</b><p>The cap threads onto steel, not plastic. Nothing in the water path off-gasses, and nothing holds yesterday's taste.</p></div>
+          </li>
+          <li>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6 9 17l-5-5"/></svg>
+            <div><b>Half-turn lid</b><p>One short turn opens it. There's no click, no thread-hunting at 6 a.m. in the dark.</p></div>
+          </li>
+          <li>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M20 6 9 17l-5-5"/></svg>
+            <div><b>A base that doesn't wobble</b><p>Machined flat, with a silicone ring recessed inside the wall — quiet on a desk, stable on a train table.</p></div>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <div class="stat-band">
+    <div class="wrap stats">
+      <div><b>24 h</b><span>Cold retention</span></div>
+      <div><b>31 h</b><span>Ice cube survival</span></div>
+      <div><b>342 g</b><span>Empty weight</span></div>
+      <div><b>0</b><span>Plastic in water path</span></div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="wrap" style="max-width:900px">
+      <div class="sec-head reveal" style="justify-content:flex-start"><h2>The questions<br>worth answering.</h2></div>
+      <details open>
+        <summary>Will it fit in a cup holder?</summary>
+        <p>The base is 7.2 cm across, which is inside the range most car and stroller cup holders accept. If your holder is tight on a standard 0.5 L bottle, it will be tight on this one too.</p>
+      </details>
+      <details>
+        <summary>Does it taste like metal?</summary>
+        <p>No. The interior is uncoated 18/8 stainless, the same alloy used in hospital and food-service equipment. Metal taste comes from older carbon-steel bottles or from soap left in the seal — both avoided here.</p>
+      </details>
+      <details>
+        <summary>Can I put coffee in it?</summary>
+        <p>Yes, and the lid seals well enough for it. Coffee will leave an aroma behind in the silicone seal after a few weeks; soaking the seal in hot water with a spoon of baking soda clears it.</p>
+      </details>
+      <details>
+        <summary>How do I get the seal replaced?</summary>
+        <p>Write to us with the date on the base. We send a new seal once a year, free, for as long as you own the bottle — no receipt, no proof of purchase.</p>
+      </details>
+      <details>
+        <summary>What actually breaks first?</summary>
+        <p>The seal, after roughly two years of daily use — which is why it's replaceable. The vacuum and the body are built to outlast the person carrying them.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="buy" id="buy">
+    <img src="https://images.unsplash.com/photo-1622483767028-3f66f32aef97?auto=format&fit=crop&w=1800&q=80" alt="" aria-hidden="true" loading="lazy">
+    <div class="wrap">
+      <div class="mono" style="color:var(--accent)">Ships tomorrow · Delivered in 2–4 days</div>
+      <h2>One bottle.<br>Ten years.</h2>
+      <p id="buyLine">Glacier finish, 750 ml, $48. If it fails while you still want it, we replace it.</p>
+      <div class="hero-cta" style="justify-content:center;margin-top:0">
+        <button class="btn btn-solid" id="orderBtn">Order the 750 ml</button>
+        <a class="btn" href="#specs">Compare specs again</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap foot">
+    <div class="brand" style="font-size:1.3rem">HALDE</div>
+    <div class="mono">Sample product page · demo content</div>
+    <div class="mono">Made for water, mostly</div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  'use strict';
+
+  /* ---------- REVEAL ---------- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if ('IntersectionObserver' in window) {
+    var io = new IntersectionObserver(function(entries){
+      entries.forEach(function(e){
+        if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(function(el){ io.observe(el); });
+  } else {
+    revealEls.forEach(function(el){ el.classList.add('in'); });
+  }
+
+  /* ---------- FINISHES ---------- */
+  var IMG_A = 'https://images.unsplash.com/photo-1548839140-29a749e1cf4d?auto=format&fit=crop&w=1000&q=80';
+  var IMG_B = 'https://images.unsplash.com/photo-1625708458528-802ec79b1ed8?auto=format&fit=crop&w=1000&q=80';
+  var IMG_C = 'https://images.unsplash.com/photo-1550505095-81378a674395?auto=format&fit=crop&w=1000&q=80';
+  var IMG_D = 'https://images.unsplash.com/photo-1610824352934-c10d87b700cc?auto=format&fit=crop&w=1000&q=80';
+
+  var finishes = [
+    { name:'Glacier', hex:'#E9EDE9', img:IMG_A,
+      desc:'Soft off-white with a fine matte tooth. Hides fingerprints, shows scratches — a bottle that looks used on purpose.' },
+    { name:'Basalt', hex:'#2E3330', img:IMG_D,
+      desc:'Near-black with a green undertone. Invisible in a dark bag, and the finish that shows water marks least.' },
+    { name:'Meltwater', hex:'#7BE0C0', img:IMG_B,
+      desc:'The loud one. A pale glacial mint that reads almost white in sunlight and unmistakable on a shared shelf.' },
+    { name:'Ember', hex:'#C0562F', img:IMG_C,
+      desc:'Burnt clay, matte. Warm enough that the bottle is easy to spot across a campsite in low light.' },
+    { name:'Brass', hex:'#C9A24B', img:IMG_A,
+      desc:'Dull gold with a brushed grain. It patinas where your hand sits — the only finish that changes as you use it.' }
+  ];
+
+  var swWrap = document.getElementById('swatches');
+  var imgEl = document.getElementById('finishImg');
+  var tintEl = document.getElementById('finishTint');
+  var nameEl = document.getElementById('finishName');
+  var descEl = document.getElementById('finishDesc');
+  var addEl = document.getElementById('addName');
+  var buyLine = document.getElementById('buyLine');
+  var idxLabel = document.querySelector('#finish .mono');
+
+  function hexToRgba(hex, a){
+    var h = hex.replace('#','');
+    if (h.length === 3) h = h[0]+h[0]+h[1]+h[1]+h[2]+h[2];
+    var n = parseInt(h, 16);
+    return 'rgba(' + ((n>>16)&255) + ',' + ((n>>8)&255) + ',' + (n&255) + ',' + a + ')';
+  }
+
+  function selectFinish(i){
+    var f = finishes[i];
+    imgEl.style.opacity = '0.25';
+    setTimeout(function(){
+      imgEl.src = f.img;
+      imgEl.style.opacity = '1';
+    }, 160);
+    tintEl.style.background = hexToRgba(f.hex, i === 1 ? 0.55 : 0.75);
+    nameEl.textContent = f.name;
+    descEl.textContent = f.desc;
+    addEl.textContent = f.name;
+    buyLine.textContent = f.name + ' finish, 750 ml, $48. If it fails while you still want it, we replace it.';
+    idxLabel.textContent = 'Finish 0' + (i+1) + ' / 05';
+    Array.prototype.forEach.call(swWrap.children, function(btn, j){
+      btn.setAttribute('aria-pressed', j === i ? 'true' : 'false');
+    });
+  }
+
+  finishes.forEach(function(f, i){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'sw';
+    b.style.background = f.hex;
+    b.setAttribute('aria-label', f.name + ' finish');
+    b.setAttribute('aria-pressed', i === 0 ? 'true' : 'false');
+    b.title = f.name;
+    b.addEventListener('click', function(){ selectFinish(i); });
+    swWrap.appendChild(b);
+  });
+  tintEl.style.background = hexToRgba(finishes[0].hex, 0.75);
+
+  var orderBtn = document.getElementById('orderBtn');
+  orderBtn.addEventListener('click', function(){
+    var label = addEl.textContent;
+    orderBtn.textContent = 'Added — ' + label + ' in your cart';
+    setTimeout(function(){ orderBtn.textContent = 'Order the 750 ml'; }, 2600);
+  });
+
+  /* ---------- ICE CALCULATOR ---------- */
+  var sizeEl = document.getElementById('size');
+  var tempEl = document.getElementById('temp');
+  var fillEl = document.getElementById('fill');
+  var sizeOut = document.getElementById('sizeOut');
+  var tempOut = document.getElementById('tempOut');
+  var fillOut = document.getElementById('fillOut');
+  var hoursEl = document.getElementById('hours');
+  var barEl = document.getElementById('bar');
+  var adviceEl = document.getElementById('advice');
+
+  function paintTrack(el){
+    var min = parseFloat(el.min), max = parseFloat(el.max), v = parseFloat(el.value);
+    var p = ((v - min) / (max - min)) * 100;
+    el.style.setProperty('--p', p + '%');
+  }
+
+  function compute(){
+    var size = parseFloat(sizeEl.value);
+    var temp = parseFloat(tempEl.value);
+    var fill = parseFloat(fillEl.value);
+
+    // Base retention at 21 C, 80% full, 750 ml reference = 31 h for ice survival.
+    var bySize = 31 * (0.55 + (size - 500) / 500 * 0.75);      // larger vessels hold ice longer
+    var byTemp = 1 - (temp - 21) * 0.024;                        // every degree costs ~2.4%
+    var byFill = 1 - (80 - fill) * 0.008;                        // headspace with air costs ~0.8% per point
+    var hours = bySize * byTemp * byFill;
+    hours = Math.max(3, Math.min(46, hours));
+
+    sizeOut.textContent = size + ' ml';
+    tempOut.textContent = temp + ' °C';
+    fillOut.textContent = fill + '%';
+    hoursEl.textContent = hours.toFixed(1);
+
+    var pct = Math.max(6, Math.min(100, (hours / 46) * 100));
+    barEl.style.width = pct + '%';
+
+    var msg;
+    if (hours >= 30) msg = 'Ice will still be rattling around two days in. Keep the lid closed and this is the easiest bottle to live with.';
+    else if (hours >= 22) msg = 'Solid overnight. You will still hear ice next morning — the setting most people actually use.';
+    else if (hours >= 15) msg = 'Good for a workday or a flight. Expect mostly-melted ice by evening, cold water regardless.';
+    else if (hours >= 9) msg = 'A full shift of cold water. Ice gives up in the afternoon; the vacuum keeps the rest well under room temperature.';
+    else msg = 'Hot room, small bottle, lots of air. The ice is a garnish here — pre-chill the bottle with cold water for a minute first.';
+    adviceEl.textContent = msg;
+
+    paintTrack(sizeEl); paintTrack(tempEl); paintTrack(fillEl);
+  }
+
+  [sizeEl, tempEl, fillEl].forEach(function(el){
+    el.addEventListener('input', compute);
+  });
+  compute();
+})();
+</script>
+</body>
+</html>
